@@ -39,11 +39,7 @@ def cholesky(cov_matrix):
     return matrix_A
 
 # -> (nums_sims * nums_assets)
-def cal_stock_prices(rs, S0s, r, dividends, sigmas, big_t):
-    mus = []  # n
-    for i in range(len(S0s)):
-        mus.append(np.log(S0s[i]) + (r - dividends[i] - sigmas[i]**2 / 2)*big_t)
-    # stock pices: mu + variance
+def cal_stock_prices(rs, mus):
     for j in range(len(mus)):
         rs[:, j] = rs[:, j] + mus[j]
     rs = np.exp(rs)
@@ -65,6 +61,7 @@ def cal_random_vars(matrix_A, zs):
 # sampling random vars using "variance reduction"
 def variance_reduction(matrix_A, zs):
     zs_new = np.matrix(np.append(zs[:len(zs)//2], -zs[:len(zs)//2], axis=0))
+    zs_new -= np.mean(zs_new)
     zs_new /= np.std(zs_new)
     rs = np.dot(zs_new, matrix_A)
     return rs
@@ -72,12 +69,12 @@ def variance_reduction(matrix_A, zs):
 def inverse_cholesky(matrix_A, zs):
     n = nums_assets
     zs_new = np.array(np.append(zs[:len(zs)//2], -zs[:len(zs)//2], axis=0))
+    zs_new -= np.mean(zs_new)
     zs_new /= np.std(zs_new)
     zs_cof = np.corrcoef([zs_new[:, ass] for ass in range(n)])
     cho = cholesky(zs_cof)
     rs = np.dot(np.matrix(zs_new), np.dot(np.linalg.inv(cho), matrix_A))
     return rs
-    
     
 
 if __name__ == "__main__":
@@ -87,6 +84,10 @@ if __name__ == "__main__":
     # cholesky
     cov_matrix = cal_covmatrix(ros, sigmas, big_t)
     matrix_A = cholesky(cov_matrix)
+    
+    mus = []  # n
+    for i in range(nums_assets):
+        mus.append(np.log(S0s[i]) + (r - dividends[i] - sigmas[i]**2 / 2)*big_t)
 
     # calculate stock prices
     arr_basics, arr_bonus1, arr_bonus2 = [], [], []
@@ -95,19 +96,19 @@ if __name__ == "__main__":
 
         # basics
         matrix_r = cal_random_vars(matrix_A, rand_seeds)
-        sps = cal_stock_prices(matrix_r, S0s, r, dividends, sigmas, big_t)
+        sps = cal_stock_prices(matrix_r, mus)
         payoff = cal_payoff(sps, k, r, big_t)
         arr_basics.append(payoff)
 
         # bonus 1
         matrix_r_varred = variance_reduction(matrix_A, rand_seeds)
-        sps_red = cal_stock_prices(matrix_r_varred, S0s, r, dividends, sigmas, big_t)
+        sps_red = cal_stock_prices(matrix_r_varred, mus)
         payoff_red = cal_payoff(sps_red, k, r, big_t)
         arr_bonus1.append(payoff_red)
 
         # bonus 2
         matrix_r_inv = inverse_cholesky(matrix_A, rand_seeds)
-        sps_inv = cal_stock_prices(matrix_r_inv, S0s, r, dividends, sigmas, big_t)
+        sps_inv = cal_stock_prices(matrix_r_inv, mus)
         payoff_inv = cal_payoff(sps_inv, k, r, big_t)
         arr_bonus2.append(payoff_inv)
         
