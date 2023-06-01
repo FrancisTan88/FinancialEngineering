@@ -98,7 +98,7 @@ class BinomialTree2D(BlackScholesModel):
         american_calls = [[-1] * (self.n+1) for i in range(self.n+1)]
         american_puts = [[-1] * (self.n+1) for i in range(self.n+1)]
         df = np.exp(-self.r * self.dt)
-        
+
         for i in range(self.n + 1):
             european_calls[i][self.n] = max(stocks[i][self.n] - self.k, 0)
             european_puts[i][self.n] = max(self.k - stocks[i][self.n], 0)
