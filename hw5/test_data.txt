@@ -64,8 +64,8 @@ Bonus2 = (True or False)
 50
 10000
 20
-False
 True
+False
 
 --> answer:
 Monte Carlo --> 95% Confidence Interval of Euro calls: 2.2513 ~ 2.3807 (roughly)

@@ -59,7 +59,12 @@ def main():
             calls_usa_linear.append(round(c_u_linear, 4))
             calls_euro_logly.append(round(c_e_logly, 4))
             calls_usa_logly.append(round(c_u_logly, 4))
-        plot_curve(lst_M, calls_euro_linear, calls_usa_linear, calls_euro_logly, calls_usa_logly)
+            print(f"European calls(linear) = {round(c_e_linear, 4)}")
+            print(f"American calls(linear) = {round(c_u_linear, 4)}")
+            print(f"European calls(logarithmically) = {round(c_e_logly, 4)}")
+            print(f"American calls(logarithmically) = {round(c_u_logly, 4)}")
+            print()
+        plot_curve(lst_M, calls_euro_linear, calls_usa_linear, calls_euro_logly, calls_usa_logly, t=t)
     else:
         bt = BinomialTree(S_t, K, r, q, sigma, t, T_minus_t, M, n, S_ave_t, Sim_n, Rep_n)
         # bonus2 only
