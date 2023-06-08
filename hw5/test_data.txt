@@ -1,0 +1,72 @@
+(1)
+S_t = 50
+K = 50
+r = 0.1
+q = 0.05
+sigma = 0.8
+t = 0
+T_minus_t = 0.25
+M = 100
+n = 100
+S_ave_t = 50
+Sim_n = 10000
+Rep_n = 20
+Bonus1 = (True or False)
+Bonus2 = (True or False)
+
+--> for you to copy:
+50
+50
+0.1
+0.05
+0.8
+0
+0.25
+100
+100
+50
+10000
+20
+True
+False
+
+--> answer:
+Monte Carlo --> 95% Confidence Interval of Euro calls: 4.4838 ~ 4.8055 (roughly)
+Binomial Tree --> Euro calls = 4.7354, American calls = 5.4146
+
+
+(2)
+S_t = 50
+K = 50
+r = 0.1
+q = 0.05
+sigma = 0.8
+t = 0.25
+T_minus_t = 0.25
+M = 100
+n = 100
+S_ave_t = 50
+Sim_n = 10000
+Rep_n = 20
+Bonus1 = (True or False)
+Bonus2 = (True or False)
+
+--> for you to copy:
+50
+50
+0.1
+0.05
+0.8
+0.25
+0.25
+100
+100
+50
+10000
+20
+False
+True
+
+--> answer:
+Monte Carlo --> 95% Confidence Interval of Euro calls: 2.2513 ~ 2.3807 (roughly)
+Binomial Tree --> Euro calls = 2.3795, American calls = 2.5079
