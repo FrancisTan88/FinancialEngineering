@@ -1,6 +1,5 @@
 from models import MonteCarlo, BinomialTree
 import numpy as np
-import datetime
 import matplotlib.pyplot as plt
 
 
@@ -85,6 +84,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-

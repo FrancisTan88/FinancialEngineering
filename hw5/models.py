@@ -38,6 +38,11 @@ def binary_search(avg_lst, A):
         weight = (avg_lst[left-1][0] - A) / (avg_lst[left-1][0] - avg_lst[left][0])
         return weight*avg_lst[left][1] + (1-weight)*avg_lst[left-1][1]
 
+"""
+Note: if we adopt the logarithmically placed method,
+we have to take the logarithm to the A_max, A_min, Au(or Ad)
+when using the linear interpolation.
+"""
 def linear_interpolation(avg_lst, A, nums_cut, logarithmically):
     if A >= avg_lst[0][0]:
         return avg_lst[0][1]
@@ -78,7 +83,6 @@ class MonteCarlo:
         self.S_ave_t = S_ave_t
         self.nums_sim = nums_sim
         self.nums_rep = nums_rep
-        # self.search_ways = search_ways
 
         self.dt = self.T_minus_t / self.n
         self.periods_before_t = 1 + self.t/self.dt  # include t itself
@@ -135,7 +139,9 @@ class BinomialTree(MonteCarlo):
                     nodes[i][j][k][1] = -1
 
         return nodes
-    
+
+    # the only diff with "linearly cut" is that we take logarithm to A_max, A_min,
+    # and then take exponential to the whole formula when calculating representative avg price.
     def create_nodes_logarithmically_cut(self):
         nodes = np.zeros((self.n+1, self.n+1, self.M+1, 2))  # 4D array
         for j in range(self.n+1):
@@ -156,13 +162,12 @@ class BinomialTree(MonteCarlo):
     
     # for european calls
     def backward_induction_euro(self, nodes, search_way, logly):
-        # calculate the payoffs of the last column
+        # calculate the payoffs for the last column
         for row in range(self.n+1):
             nodes[row][-1] = np.array(nodes[row][-1])
             nodes[row][-1][:, 1] = np.where(nodes[row][-1][:, 0] > self.K, 
                                             nodes[row][-1][:, 0] - self.K, 0)
         # backward induction
-        # for algo in self.search_ways:
         for col in range(self.n-1, -1, -1):
             for row in range(col+1):
                 for k in range(len(nodes[row][col])):
@@ -187,9 +192,9 @@ class BinomialTree(MonteCarlo):
 
         return nodes[0][0][0][1]
 
-    # for American calls: the only diff is to consider the "early exercise"
+    # for American calls: the only diff with euro calls is that considers the "early exercise"
     def backward_induction_usa(self, nodes, search_way, logly):    
-        # calculate the payoffs of the last column
+        # calculate the payoffs for the last column
         for row in range(self.n+1):
             nodes[row][-1] = np.array(nodes[row][-1])
             nodes[row][-1][:, 1] = np.where(nodes[row][-1][:, 0] > self.K, 
@@ -253,6 +258,3 @@ class BinomialTree(MonteCarlo):
         calls_euro = self.backward_induction_euro(nodes, "linear", False)
         calls_usa = self.backward_induction_usa(nodes, "linear", False)
         return calls_euro, calls_usa
-            
-            
-
